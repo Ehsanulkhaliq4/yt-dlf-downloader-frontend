@@ -1,0 +1,57 @@
+<div class="form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <mat-icon class="header-icon">video_library</mat-icon>
+      <h2>YouTube Video Downloader</h2>
+      <p>Download your favorite YouTube videos in various formats</p>
+    </div>
+
+    <form [formGroup]="downloadForm" (ngSubmit)="onSubmit()" class="download-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>YouTube URL</mat-label>
+        <input 
+          matInput 
+          formControlName="url" 
+          placeholder="https://www.youtube.com/watch?v=..."
+          type="url"
+        />
+        <mat-icon matSuffix>link</mat-icon>
+        
+        <mat-error *ngIf="url?.hasError('required')">
+          YouTube URL is required
+        </mat-error>
+        <mat-error *ngIf="url?.hasError('pattern')">
+          Please enter a valid YouTube URL
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Format</mat-label>
+        <mat-select formControlName="format">
+          <mat-option *ngFor="let format of formats" [value]="format.value">
+            {{ format.label }}
+          </mat-option>
+        </mat-select>
+        <mat-icon matSuffix>format_list_bulleted</mat-icon>
+      </mat-form-field>
+
+      <button 
+        mat-raised-button 
+        color="primary" 
+        type="submit" 
+        class="submit-button"
+        [disabled]="!downloadForm.valid || isLoading"
+        [class.loading]="isLoading"
+      >
+        <span *ngIf="!isLoading">
+          <mat-icon>download</mat-icon>
+          Download Video
+        </span>
+        <span *ngIf="isLoading" class="loading-content">
+          <mat-spinner diameter="20"></mat-spinner>
+          Processing...
+        </span>
+      </button>
+    </form>
+  </div>
+</div>

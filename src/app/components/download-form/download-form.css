@@ -1,0 +1,99 @@
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 60vh;
+  padding: 2rem 1rem;
+}
+
+.form-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  backdrop-filter: blur(10px);
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.form-header .header-icon {
+  font-size: 3rem;
+  width: 3rem;
+  height: 3rem;
+  color: #ff4b4b;
+  margin-bottom: 1rem;
+}
+
+.form-header h2 {
+  color: #333;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  font-size: 1.8rem;
+}
+
+.form-header p {
+  color: #666;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.download-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.submit-button {
+  height: 50px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.submit-button[disabled] {
+  opacity: 0.7;
+}
+
+.submit-button.loading {
+  opacity: 0.8;
+}
+
+.submit-button .loading-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.submit-button mat-icon:not(.mat-progress-spinner) {
+  margin-right: 0.5rem;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .form-container {
+    padding: 1rem;
+  }
+
+  .form-card {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .form-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .form-header p {
+    font-size: 0.9rem;
+  }
+}

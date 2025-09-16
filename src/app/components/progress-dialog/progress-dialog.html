@@ -1,0 +1,40 @@
+<div class="progress-dialog">
+  <h2 mat-dialog-title class="dialog-title">
+    <mat-icon class="title-icon">downloading</mat-icon>
+    Download Progress
+  </h2>
+  
+  <mat-dialog-content class="dialog-content">
+    <div class="progress-info">
+      <p class="status-text">{{ status }}</p>
+      
+      <mat-progress-bar 
+        mode="determinate" 
+        [value]="progress"
+        class="progress-bar">
+      </mat-progress-bar>
+      
+      <p class="progress-text">{{ progress }}% complete</p>
+    </div>
+
+    <div *ngIf="downloadComplete" class="download-complete">
+      <div class="success-icon">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <p class="success-message">Download completed successfully!</p>
+      
+      <a *ngIf="downloadUrl" [href]="downloadUrl" download class="download-link">
+        <button mat-raised-button color="primary" class="download-btn">
+          <mat-icon>file_download</mat-icon>
+          Download File
+        </button>
+      </a>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="closeDialog()">
+      {{ downloadComplete ? 'Close' : 'Cancel' }}
+    </button>
+  </mat-dialog-actions>
+</div>

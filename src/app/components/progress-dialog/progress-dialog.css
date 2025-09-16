@@ -1,0 +1,77 @@
+.progress-dialog {
+  min-width: 300px;
+}
+
+.dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 1.5rem 1.5rem 1rem;
+}
+
+.dialog-title .title-icon {
+  color: #2196f3;
+}
+
+.dialog-content {
+  padding: 0 1.5rem 1.5rem;
+}
+
+.dialog-content .progress-info {
+  text-align: center;
+}
+
+.dialog-content .progress-info .status-text {
+  margin: 0 0 1rem 0;
+  color: #666;
+  font-weight: 500;
+}
+
+.dialog-content .progress-info .progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.dialog-content .progress-info .progress-text {
+  margin: 0;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.dialog-content .download-complete {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.dialog-content .download-complete .success-icon {
+  color: #4caf50;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.dialog-content .download-complete .success-icon mat-icon {
+  width: 48px;
+  height: 48px;
+  font-size: 48px;
+}
+
+.dialog-content .download-complete .success-message {
+  color: #333;
+  font-weight: 500;
+  margin: 0 0 1.5rem 0;
+}
+
+.dialog-content .download-complete .download-link {
+  text-decoration: none;
+}
+
+.dialog-content .download-complete .download-link .download-btn {
+  margin: 0 auto;
+}
+
+.dialog-actions {
+  padding: 0 1.5rem 1rem;
+  justify-content: flex-end;
+}
