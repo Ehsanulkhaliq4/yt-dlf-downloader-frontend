@@ -50,11 +50,31 @@ export class DownloadForm {
     });
   }
 
+  fetchVideoInfo(): void {
+    if (this.downloadForm.valid) {
+      this.isLoading = true;
+      console.log("Fetching video info...");
+      const { url } = this.downloadForm.value;
+      this.downloadService.getVideoInfo(url).subscribe({
+        next: (info) => {
+          this.isLoading = false;
+          console.log("Video info fetched successfully:", info);
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error("Error fetching video info:", error);
+        }
+      });
+    }
+  }
+
    onSubmit(): void {
+    console.log("onSubmit called");
     if (this.downloadForm.valid) {
       this.isLoading = true;
       const { url, format } = this.downloadForm.value;
-
+      console.log(`Submitting download for URL: ${url} with format: ${format}`);
+      
       this.downloadService.downloadVideo(url, format).subscribe({
         next: (response) => {
           this.isLoading = false;

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
@@ -18,6 +18,11 @@ export class Download {
 
    constructor(private http: HttpClient) { }
 
+   getVideoInfo(url: string): Observable<any> {
+    console.log(`Fetching video info for URL: ${url}`);
+     const params = new HttpParams().set('url', url);
+     return this.http.get<any>(`${this.apiUrl}/info`, { params });
+   }
 
      downloadVideo(url: string, format: string): Observable<DownloadResponse> {
     // Simulate API call
