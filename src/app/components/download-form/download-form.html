@@ -7,13 +7,14 @@
     </div>
 
     <form [formGroup]="downloadForm" (ngSubmit)="onSubmit()" class="download-form">
-      <mat-form-field appearance="outline" class="full-width" (onBlur)="fetchVideoInfo()">
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>YouTube URL</mat-label>
         <input 
           matInput 
           formControlName="url" 
           placeholder="https://www.youtube.com/watch?v=..."
           type="url"
+          (blur)="fetchVideoInfo()"  
         />
         <mat-icon matSuffix>link</mat-icon>
         
@@ -24,29 +25,34 @@
           Please enter a valid YouTube URL
         </mat-error>
       </mat-form-field>
-
-
-
-
-
-      <mat-form-field appearance="outline" class="full-width">
+      <mat-card *ngIf="videoDetails" class="example-card" appearance="outlined">
+         <mat-card-header>
+           <mat-card-title>Title : {{ videoDetails.title }}</mat-card-title>
+           <mat-card-subtitle>Duration : {{ videoDetails.duration }}</mat-card-subtitle>
+         </mat-card-header>
+        <img mat-card-image [src]="videoDetails.thumbnail" alt="Video thumbnail">
+        <mat-card-content>
+          <p>
+            {{ videoDetails.description }}
+          </p>
+        </mat-card-content>
+      </mat-card>
+      <mat-form-field *ngIf="videoDetails?.formats" appearance="outline" class="full-width">
         <mat-label>Format</mat-label>
         <mat-select formControlName="format">
-          <mat-option *ngFor="let format of formats" [value]="format.value">
-            {{ format.label }}
+          <mat-option *ngFor="let format of videoDetails?.formats" [value]="format.id">
+            {{ format.quality }} - {{ format.format }} ({{ format.size }})
           </mat-option>
         </mat-select>
         <mat-icon matSuffix>format_list_bulleted</mat-icon>
       </mat-form-field>
-
-
 
       <button 
         mat-raised-button 
         color="primary" 
         type="submit" 
         class="submit-button"
-        [disabled]="!downloadForm.valid || isLoading"
+        [disabled]="!downloadForm.valid || isLoading || !videoDetails"
         [class.loading]="isLoading"
       >
         <span *ngIf="!isLoading">

@@ -11,6 +11,7 @@ import { Download } from '../../service/download';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProgressDialogComponent } from '../progress-dialog/progress-dialog';
 import { MatIcon } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-download-form',
@@ -24,7 +25,8 @@ import { MatIcon } from '@angular/material/icon';
     MatProgressSpinnerModule,
     MatDialogModule,
     MatSnackBarModule,
-    MatIcon
+    MatIcon,
+    MatCardModule
   ],
   templateUrl: './download-form.html',
   styleUrl: './download-form.css'
@@ -33,12 +35,8 @@ export class DownloadForm {
 
   downloadForm: FormGroup;
   isLoading = false;
-  formats = [
-    { value: 'mp4', label: 'MP4 Video (720p)' },
-    { value: 'mp4-1080', label: 'MP4 Video (1080p)' },
-    { value: 'mp3', label: 'MP3 Audio' },
-    { value: 'webm', label: 'WebM Format' }
-  ];
+  formats = [];
+  videoDetails: any;
 
   constructor(private fb: FormBuilder, private downloadService: Download, private dialog: MatDialog , private snackBar: MatSnackBar) {
      this.downloadForm = this.fb.group({
@@ -58,7 +56,11 @@ export class DownloadForm {
       this.downloadService.getVideoInfo(url).subscribe({
         next: (info) => {
           this.isLoading = false;
-          console.log("Video info fetched successfully:", info);
+          this.videoDetails = info;
+          this.formats = info.formats;
+          console.log(this.formats);
+          
+          console.log("Video info fetched successfully:", this.videoDetails);
         },
         error: (error) => {
           this.isLoading = false;

@@ -26,11 +26,7 @@ export class Download {
 
      downloadVideo(url: string, format: string): Observable<DownloadResponse> {
     // Simulate API call
-    return of({
-      id: 'dl-' + Date.now(),
-      status: 'started',
-      message: 'Download initiated successfully'
-    }).pipe(delay(1000));
+    return this.http.post<DownloadResponse>(`${this.apiUrl}/request`, { url, format });
   }
 
    getDownloadProgress(id: string): Observable<any> {
