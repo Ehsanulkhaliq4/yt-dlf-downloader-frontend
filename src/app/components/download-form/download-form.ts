@@ -12,6 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProgressDialogComponent } from '../progress-dialog/progress-dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-download-form',
@@ -26,7 +27,8 @@ import { MatCardModule } from '@angular/material/card';
     MatDialogModule,
     MatSnackBarModule,
     MatIcon,
-    MatCardModule
+    MatCardModule,
+    MatProgressBarModule
   ],
   templateUrl: './download-form.html',
   styleUrl: './download-form.css'
@@ -37,6 +39,7 @@ export class DownloadForm {
   isLoading = false;
   formats = [];
   videoDetails: any;
+  progress: number = 0;
 
   constructor(private fb: FormBuilder, private downloadService: Download, private dialog: MatDialog , private snackBar: MatSnackBar) {
      this.downloadForm = this.fb.group({
@@ -90,6 +93,18 @@ export class DownloadForm {
       });
     }
   }
+
+  trackProgress(downloadId: string) {
+  const interval = setInterval(() => {
+   this.downloadService.getTrackingProgress(downloadId).subscribe(res => {
+      this.progress = res.progress;
+      if (this.progress >= 100) {
+        clearInterval(interval);
+        console.log("Download completed!");
+      }
+    });
+  }, 1000);
+}
 
   openProgressDialog(downloadId: string): void {
     this.dialog.open(ProgressDialogComponent, {

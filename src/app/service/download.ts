@@ -24,7 +24,7 @@ export class Download {
      return this.http.get<any>(`${this.apiUrl}/info`, { params });
    }
 
-     downloadVideo(url: string, format: string): Observable<DownloadResponse> {
+  downloadVideo(url: string, format: string): Observable<DownloadResponse> {
     // Simulate API call
     return this.http.post<DownloadResponse>(`${this.apiUrl}/request`, { url, format });
   }
@@ -41,4 +41,9 @@ export class Download {
   getDownloadHistory(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/history`);
   }
+
+  getTrackingProgress(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/progress/${id}`);
+  }
+
 }
