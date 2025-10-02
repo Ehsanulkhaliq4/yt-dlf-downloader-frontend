@@ -10,5 +10,5 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './app.css'
 })
 export class App {
-  title = 'YT-DLF FAST DOWNLOADER';
+  title = 'YT-DLP FAST DOWNLOADER';
 }
