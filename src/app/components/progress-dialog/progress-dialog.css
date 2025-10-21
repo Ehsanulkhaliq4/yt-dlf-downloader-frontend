@@ -1,77 +1,127 @@
-.progress-dialog {
-  min-width: 300px;
+.progress-card {
+  position: relative;
+  min-width: 450px;
 }
 
-.dialog-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0;
-  padding: 1.5rem 1.5rem 1rem;
+.close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
 }
 
-.dialog-title .title-icon {
-  color: #2196f3;
-}
-
-.dialog-content {
-  padding: 0 1.5rem 1.5rem;
-}
-
-.dialog-content .progress-info {
+.loading-state {
   text-align: center;
+  padding: 40px 20px;
 }
 
-.dialog-content .progress-info .status-text {
-  margin: 0 0 1rem 0;
+.loading-state p {
+  margin-top: 16px;
   color: #666;
-  font-weight: 500;
+  font-size: 14px;
 }
 
-.dialog-content .progress-info .progress-bar {
+.progress-section {
+  margin: 24px 0;
+  position: relative;
+}
+
+.progress-bar {
   height: 8px;
   border-radius: 4px;
-  margin-bottom: 0.5rem;
 }
 
-.dialog-content .progress-info .progress-text {
-  margin: 0;
-  color: #999;
-  font-size: 0.9rem;
-}
-
-.dialog-content .download-complete {
+.percentage {
   text-align: center;
-  margin-top: 1.5rem;
-}
-
-.dialog-content .download-complete .success-icon {
-  color: #4caf50;
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.dialog-content .download-complete .success-icon mat-icon {
-  width: 48px;
-  height: 48px;
-  font-size: 48px;
-}
-
-.dialog-content .download-complete .success-message {
+  margin-top: 12px;
+  font-weight: bold;
+  font-size: 18px;
   color: #333;
+}
+
+.progress-details {
+  margin: 24px 0;
+}
+
+.detail-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 12px;
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.detail-icon {
+  color: #666;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-size: 12px;
+  color: #666;
   font-weight: 500;
-  margin: 0 0 1.5rem 0;
+  margin-bottom: 2px;
 }
 
-.dialog-content .download-complete .download-link {
-  text-decoration: none;
+.detail-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
 }
 
-.dialog-content .download-complete .download-link .download-btn {
-  margin: 0 auto;
+.status-text {
+  text-transform: capitalize;
 }
 
-.dialog-actions {
-  padding: 0 1.5rem 1rem;
-  justify-content: flex-end;
+.success {
+  color: #4caf50;
+}
+
+.warn {
+  color: #f44336;
+}
+
+.accent {
+  color: #ff4081;
+}
+
+.last-update {
+  font-size: 11px;
+  color: #999;
+  margin-left: 8px;
+}
+
+.completion-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: #e8f5e8;
+  border-radius: 8px;
+  margin-top: 16px;
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.status-icon {
+  margin-right: 8px;
+}
+
+.progress-title {
+  display: flex;
+  align-items: center;
 }

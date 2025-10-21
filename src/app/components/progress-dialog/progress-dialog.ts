@@ -1,11 +1,13 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Download } from '../../service/download';
-import { MatIcon } from '@angular/material/icon';
+import { Download, DownloadProgress } from '../../service/download';
+import { MatCardModule } from '@angular/material/card';
+import { catchError, interval, of, Subscription, switchMap, takeWhile } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-progress-dialog',
@@ -16,17 +18,24 @@ import { MatIcon } from '@angular/material/icon';
     MatProgressBarModule,
     MatButtonModule,
     MatIconModule,
-    MatIcon
+    MatCardModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './progress-dialog.html',
-  styleUrl: './progress-dialog.css'
+  styleUrl: './progress-dialog.css',
 })
 export class ProgressDialogComponent implements OnInit, OnDestroy {
-  progress = 0;
-  status = 'Starting download...';
-  downloadComplete = false;
-  downloadUrl: string | null = null;
-  private intervalId: any;
+  progress: DownloadProgress = {
+    downloadId: '',
+    percentage: 0,
+    status: 'Starting...',
+    speed: '0 KiB/s',
+    eta: '00:00',
+    lastUpdate: Date.now(),
+  };
+  isLoading = true;
+  private progressSubscription!: Subscription;
+  private readonly POLLING_INTERVAL = 1000;
 
   constructor(
     public dialogRef: MatDialogRef<ProgressDialogComponent>,
@@ -35,37 +44,77 @@ export class ProgressDialogComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.startProgressSimulation();
+    this.startProgressPolling();
   }
 
   ngOnDestroy(): void {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
+    this.stopProgressPolling();
+  }
+
+  private startProgressPolling(): void {
+    this.progressSubscription = interval(this.POLLING_INTERVAL)
+      .pipe(
+        switchMap(() => {
+          return this.downloadService.getDownloadProgress(this.data.downloadId).pipe(
+            catchError((error) => {
+              return of({
+                ...this.progress,
+                status: 'ERROR: ' + error.message,
+                percentage: 0,
+              });
+            })
+          );
+        }),
+        takeWhile((progress) => progress.percentage < 100, true) // Continue until 100%
+      )
+      .subscribe({
+        next: (progress) => {
+          this.isLoading = false;
+          this.progress = progress;
+          // Update dialog title when completed
+          if (progress.percentage >= 100) {
+            // Auto-close after 3 seconds when completed
+            setTimeout(() => {
+              this.dialogRef.close('completed');
+            }, 3000);
+          }
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.progress.status = 'ERROR: Failed to get updates';
+        },
+      });
+  }
+  private stopProgressPolling(): void {
+    if (this.progressSubscription) {
+      this.progressSubscription.unsubscribe();
     }
   }
 
-  private startProgressSimulation(): void {
-    this.intervalId = setInterval(() => {
-      this.downloadService.getDownloadProgress(this.data.downloadId).subscribe({
-        next: (progressData) => {
-          this.progress = progressData.progress;
-          this.status = progressData.status;
-          
-          if (progressData.progress === 100) {
-            this.downloadComplete = true;
-            this.downloadUrl = progressData.downloadUrl;
-            clearInterval(this.intervalId);
-          }
-        },
-        error: () => {
-          this.status = 'Download failed';
-          clearInterval(this.intervalId);
-        }
-      });
-    }, 2000);
+  getProgressColor(): string {
+    if (this.progress.percentage >= 100) return 'primary';
+    if (this.progress.status.includes('ERROR')) return 'warn';
+    return 'accent';
   }
 
-  closeDialog(): void {
+  getStatusIcon(): string {
+    if (this.progress.percentage >= 100) return 'check_circle';
+    if (this.progress.status.includes('ERROR')) return 'error';
+    if (this.progress.status.includes('Downloading')) return 'downloading';
+    return 'pending';
+  }
+
+  getStatusColor(): string {
+    if (this.progress.percentage >= 100) return 'success';
+    if (this.progress.status.includes('ERROR')) return 'warn';
+    return 'accent';
+  }
+
+  formatTime(epochTime: number): string {
+    return new Date(epochTime).toLocaleTimeString();
+  }
+
+  onClose(): void {
     this.dialogRef.close();
   }
 }

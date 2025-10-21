@@ -1,40 +1,84 @@
-<div class="progress-dialog">
-  <h2 mat-dialog-title class="dialog-title">
-    <mat-icon class="title-icon">downloading</mat-icon>
-    Download Progress
-  </h2>
-  
-  <mat-dialog-content class="dialog-content">
-    <div class="progress-info">
-      <p class="status-text">{{ status }}</p>
-      
-      <mat-progress-bar 
-        mode="determinate" 
-        [value]="progress"
-        class="progress-bar">
-      </mat-progress-bar>
-      
-      <p class="progress-text">{{ progress }}% complete</p>
-    </div>
+<mat-card class="progress-card">
+  <mat-card-header>
+    <mat-card-title class="progress-title">
+      <mat-icon [color]="getStatusColor()" class="status-icon">
+        {{ getStatusIcon() }}
+      </mat-icon>
+      {{ progress.percentage >= 100 ? 'Download Complete' : 'Download Progress' }}
+    </mat-card-title>
+    <mat-card-subtitle>
+      ID: {{ progress.downloadId.substring(0, 8) }}...
+      <span class="last-update">(Updated: {{ formatTime(progress.lastUpdate) }})</span>
+    </mat-card-subtitle>
 
-    <div *ngIf="downloadComplete" class="download-complete">
-      <div class="success-icon">
-        <mat-icon>check_circle</mat-icon>
-      </div>
-      <p class="success-message">Download completed successfully!</p>
-      
-      <a *ngIf="downloadUrl" [href]="downloadUrl" download class="download-link">
-        <button mat-raised-button color="primary" class="download-btn">
-          <mat-icon>file_download</mat-icon>
-          Download File
-        </button>
-      </a>
-    </div>
-  </mat-dialog-content>
-
-  <mat-dialog-actions class="dialog-actions">
-    <button mat-button (click)="closeDialog()">
-      {{ downloadComplete ? 'Close' : 'Cancel' }}
+    <button mat-icon-button class="close-button" (click)="onClose()" [disabled]="isLoading">
+      <mat-icon>close</mat-icon>
     </button>
-  </mat-dialog-actions>
-</div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Connecting to download server...</p>
+    </div>
+
+    <!-- Progress Content -->
+    <div *ngIf="!isLoading" class="progress-content">
+      <!-- Progress Bar -->
+      <div class="progress-section">
+        <mat-progress-bar [color]="getProgressColor()" [value]="progress.percentage" mode="determinate"
+          class="progress-bar">
+        </mat-progress-bar>
+        <div class="percentage">{{ progress.percentage.toFixed(1) }}%</div>
+      </div>
+
+      <!-- Progress Details -->
+      <div class="progress-details">
+        <div class="detail-row">
+          <div class="detail-item">
+            <mat-icon class="detail-icon">speed</mat-icon>
+            <div class="detail-content">
+              <span class="detail-label">Speed</span>
+              <span class="detail-value">{{ progress.speed }}</span>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <mat-icon class="detail-icon">schedule</mat-icon>
+            <div class="detail-content">
+              <span class="detail-label">ETA</span>
+              <span class="detail-value">{{ progress.eta }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-item">
+            <mat-icon class="detail-icon">info</mat-icon>
+            <div class="detail-content">
+              <span class="detail-label">Status</span>
+              <span class="detail-value status-text" [class]="getStatusColor()">
+                {{ progress.status }}
+              </span>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <mat-icon class="detail-icon">update</mat-icon>
+            <div class="detail-content">
+              <span class="detail-label">Last Update</span>
+              <span class="detail-value">{{ formatTime(progress.lastUpdate) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completion Message -->
+      <div *ngIf="progress.percentage >= 100" class="completion-message">
+        <mat-icon color="primary">check_circle</mat-icon>
+        <span>Download completed successfully! This dialog will close automatically.</span>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,42 +1,39 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { interval, Observable, of, throwError } from 'rxjs';
+import { catchError, delay, filter, startWith, switchMap } from 'rxjs/operators';
 
 export interface DownloadResponse {
+  downloadId(downloadId: any): unknown;
   id: string;
   status: string;
   message: string;
 }
 
+export interface DownloadProgress {
+  downloadId: string;
+  percentage: number;
+  status: string;
+  speed: string;
+  eta: string;
+  lastUpdate: number;
+}
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class Download {
-
   private apiUrl = 'http://localhost:8080/api/download';
 
-   constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-   getVideoInfo(url: string): Observable<any> {
-    console.log(`Fetching video info for URL: ${url}`);
-     const params = new HttpParams().set('url', url);
-     return this.http.get<any>(`${this.apiUrl}/info`, { params });
-   }
-
-  downloadVideo(url: string, format: string): Observable<DownloadResponse> {
-    // Simulate API call
-    return this.http.post<DownloadResponse>(`${this.apiUrl}/request`, { url, format });
+  getVideoInfo(url: string): Observable<any> {
+    const params = new HttpParams().set('url', url);
+    return this.http.get<any>(`${this.apiUrl}/info`, { params });
   }
 
-   getDownloadProgress(id: string): Observable<any> {
-    // Simulate progress updates
-    const progress = Math.min(100, Math.floor(Math.random() * 30) + 10);
-    return of({
-      progress,
-      status: progress < 100 ? 'Downloading...' : 'Complete',
-      downloadUrl: progress === 100 ? '/assets/sample.txt' : null
-    }).pipe(delay(1500));
+  downloadVideo(url: string, format: string): Observable<DownloadResponse> {
+    return this.http.post<DownloadResponse>(`${this.apiUrl}/request`, { url, format });
   }
   getDownloadHistory(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/history`);
@@ -46,4 +43,22 @@ export class Download {
     return this.http.get<any>(`${this.apiUrl}/progress/${id}`);
   }
 
+  getDownloadProgress(downloadId: string): Observable<DownloadProgress> {
+    return this.http.get<DownloadProgress>(`${this.apiUrl}/progress/${downloadId}`).pipe(
+      catchError((error) => {
+        console.error('API Error:', error);
+        return throwError(
+          () => new Error(error.error?.error || error.message || 'Failed to get progress')
+        );
+      })
+    );
+  }
+
+  pollDownloadProgress(downloadId: string): Observable<DownloadProgress> {
+    return interval(1000).pipe(
+      startWith(0),
+      switchMap(() => this.getDownloadProgress(downloadId)),
+      filter((progress) => !!progress)
+    );
+  }
 }
