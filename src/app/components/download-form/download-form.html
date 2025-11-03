@@ -40,7 +40,7 @@
       <mat-form-field *ngIf="videoDetails?.formats" appearance="outline" class="full-width">
         <mat-label>Format</mat-label>
         <mat-select formControlName="format">
-          <mat-option *ngFor="let format of videoDetails?.formats" [value]="format.id">
+          <mat-option *ngFor="let format of formats" [value]="format.id">
             {{ format.quality }} - {{ format.format }} ({{ format.size }})
           </mat-option>
         </mat-select>

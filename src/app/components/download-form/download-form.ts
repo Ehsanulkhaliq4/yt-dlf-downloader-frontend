@@ -14,6 +14,16 @@ import { MatIcon } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
+interface VideoFormat {
+  id: string;
+  quality: string;
+  format: string;  // This matches your data - it's "format" not "format"
+  size: string;
+  fps: number;
+  codec: string | null;
+  bitrate: string;
+}
+
 @Component({
   selector: 'app-download-form',
   imports: [
@@ -33,13 +43,14 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
   templateUrl: './download-form.html',
   styleUrl: './download-form.css',
 })
+
 export class DownloadForm {
   downloadForm: FormGroup;
   isLoading = false;
-  formats = [];
   videoDetails: any;
   progress: number = 0;
   activeDownloads: Map<string, DownloadProgress> = new Map();
+  formats: VideoFormat[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -67,16 +78,13 @@ export class DownloadForm {
         next: (info) => {
           this.isLoading = false;
           this.videoDetails = info;
-        this.formats = info.formats.filter((format: any) => {
-          // Convert size string to number for comparison
-          const sizeInBytes = this.convertSizeToBytes(format.size);
-          return sizeInBytes > 0;
-        });
-        
-        // If no formats available after filtering, show message
-        if (this.formats.length === 0) {
-          this.showError('No downloadable formats available for this video.');
-        }
+        this.formats  = (info.formats || []).filter((format: VideoFormat) => {
+            const size = format.size?.toUpperCase().trim() || '';
+            return !(size.startsWith('0') || size === '' || !size);
+          });  
+          if (this.formats.length === 0) {
+            this.showError('No downloadable formats available for this video.');
+          }
         },
         error: (error) => {
           this.isLoading = false;
@@ -179,28 +187,6 @@ export class DownloadForm {
       panelClass: ['success-snackbar'],
     });
   }
-
-  // Helper method to convert size string to bytes
-private convertSizeToBytes(sizeString: string): number {
-  if (!sizeString) return 0;
-  
-  const sizeMatch = sizeString.match(/(\d+\.?\d*)\s*([KMG]?B)/i);
-  if (!sizeMatch) return 0;
-  
-  const size = parseFloat(sizeMatch[1]);
-  const unit = sizeMatch[2].toUpperCase();
-  
-  switch (unit) {
-    case 'KB':
-      return size * 1024;
-    case 'MB':
-      return size * 1024 * 1024;
-    case 'GB':
-      return size * 1024 * 1024 * 1024;
-    default: // Bytes
-      return size;
-  }
-}
 
   get url() {
     return this.downloadForm.get('url');

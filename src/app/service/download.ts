@@ -25,6 +25,8 @@ export interface DownloadProgress {
 export class Download {
   private apiUrl = 'http://localhost:8080/api/download';
 
+  // private apiUrl = 'https://dlf-fast-downloader-production.up.railway.app/api/download';
+
   constructor(private http: HttpClient) {}
 
   getVideoInfo(url: string): Observable<any> {
