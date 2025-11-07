@@ -28,7 +28,9 @@
             "styles": [
               "src/custom-theme.scss",
               "src/styles.css"
-            ]
+            ],
+             "outputPath": "dist/yt-dlf-frontend",
+             "baseHref": "./"
           },
           "configurations": {
             "production": {
