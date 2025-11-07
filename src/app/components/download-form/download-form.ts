@@ -13,6 +13,7 @@ import { ProgressDialogComponent } from '../progress-dialog/progress-dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 interface VideoFormat {
   id: string;
@@ -66,32 +67,56 @@ export class DownloadForm {
           Validators.pattern('^(https?://)?(www.)?(youtube.com|youtu.?be)/.+$'),
         ],
       ],
-      format: ['mp4', Validators.required],
+      format: [null, Validators.required],
     });
+
+     // Subscribe to URL changes
+  this.downloadForm.get('url')?.valueChanges
+     .pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe((value: string) => {
+        const v = (value || '').toString().trim();
+        if (v && this.isYouTubeUrl(v)) {
+          this.fetchVideoInfo(v);
+        } else {
+          this.videoDetails = null;
+          this.formats = [];
+          this.downloadForm.patchValue({ format: null }, { emitEvent: false });
+        }
+      });
   }
 
-  fetchVideoInfo(): void {
-    if (this.downloadForm.valid) {
-      this.isLoading = true;
-      const { url } = this.downloadForm.value;
-      this.downloadService.getVideoInfo(url).subscribe({
-        next: (info) => {
-          this.isLoading = false;
-          this.videoDetails = info;
-        this.formats  = (info.formats || []).filter((format: VideoFormat) => {
-            const size = format.size?.toUpperCase().trim() || '';
-            return !(size.startsWith('0') || size === '' || !size);
-          });  
-          if (this.formats.length === 0) {
-            this.showError('No downloadable formats available for this video.');
-          }
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.showError('Failed to fetch video info. Please check the URL and try again.');
-        },
-      });
+   private isYouTubeUrl(value: string): boolean {
+    return /(?:youtube\.com|youtu\.be)/i.test(value);
+  }
+
+  fetchVideoInfo(url?: string): void {
+    const targetUrl = (url || this.downloadForm.value.url || '').toString().trim();
+    if (!targetUrl) {
+      return;
     }
+
+    console.log('[DownloadForm] fetchVideoInfo called with:', targetUrl);
+    this.isLoading = true;
+    this.downloadService.getVideoInfo(targetUrl).subscribe({
+      next: (info) => {
+        this.isLoading = false;
+        this.videoDetails = info;
+        this.formats = (info.formats || []).filter((format: VideoFormat) => {
+          const size = (format.size || '').toString().toUpperCase().trim();
+          return !(size.startsWith('0') || size === '' || !size);
+        });
+        if (this.formats.length === 0) {
+          this.showError('No downloadable formats available for this video.');
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.showError('Failed to fetch video info. Please check the URL and try again.');
+      },
+    });
   }
 
   onSubmit(): void {

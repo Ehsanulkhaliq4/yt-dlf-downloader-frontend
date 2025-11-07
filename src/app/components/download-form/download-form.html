@@ -13,8 +13,7 @@
           matInput 
           formControlName="url" 
           placeholder="https://www.youtube.com/watch?v=..."
-          type="url"
-          (blur)="fetchVideoInfo()"  
+          type="url"  
         />
         <mat-icon matSuffix>link</mat-icon>
         
@@ -45,6 +44,8 @@
           </mat-option>
         </mat-select>
         <mat-icon matSuffix>format_list_bulleted</mat-icon>
+        <mat-hint *ngIf="formats.length">Select a format to download</mat-hint>
+        <mat-hint *ngIf="!formats.length">No formats available</mat-hint>
       </mat-form-field>
 
 
@@ -55,7 +56,7 @@
         color="primary" 
         type="submit" 
         class="submit-button"
-        [disabled]="!downloadForm.valid || isLoading || !videoDetails"
+        [disabled]="!downloadForm.valid || isLoading || !videoDetails || !formats.length "
         [class.loading]="isLoading"
       >
         <span *ngIf="!isLoading">
@@ -63,7 +64,7 @@
           Download Video
         </span>
         <span *ngIf="isLoading" class="loading-content">
-          <mat-spinner diameter="20"></mat-spinner>
+          <mat-spinner mode="indeterminate" diameter="20" color="accent"></mat-spinner>
           Processing...
         </span>
       </button>
