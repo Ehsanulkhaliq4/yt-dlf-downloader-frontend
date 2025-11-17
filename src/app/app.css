@@ -36,3 +36,32 @@ body {
 .mt-2 {
   margin-top: 1rem;
 }
+
+
+.material-toolbar-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-radius: 4px;
+}
+
+.material-toolbar-content:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.material-toolbar-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  /* Perfect Material icon alignment */
+  line-height: 24px;
+}
+
+.material-toolbar-title {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24px;
+}
