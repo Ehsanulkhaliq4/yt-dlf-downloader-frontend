@@ -44,7 +44,6 @@ interface VideoFormat {
   templateUrl: './download-form.html',
   styleUrl: './download-form.css',
 })
-
 export class DownloadForm {
   downloadForm: FormGroup;
   isLoading = false;
@@ -70,12 +69,10 @@ export class DownloadForm {
       format: [null, Validators.required],
     });
 
-     // Subscribe to URL changes
-  this.downloadForm.get('url')?.valueChanges
-     .pipe(
-        debounceTime(500),
-        distinctUntilChanged()
-      )
+    // Subscribe to URL changes
+    this.downloadForm
+      .get('url')
+      ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
       .subscribe((value: string) => {
         const v = (value || '').toString().trim();
         if (v && this.isYouTubeUrl(v)) {
@@ -88,7 +85,7 @@ export class DownloadForm {
       });
   }
 
-   private isYouTubeUrl(value: string): boolean {
+  private isYouTubeUrl(value: string): boolean {
     return /(?:youtube\.com|youtu\.be)/i.test(value);
   }
 
