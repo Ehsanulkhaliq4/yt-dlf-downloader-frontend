@@ -1,4 +1,4 @@
-# YtDlfFrontend
+# YtDlp-Downloader Frontend
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.6.
 This project contains consume api's of Yt-dlf-backend Project
