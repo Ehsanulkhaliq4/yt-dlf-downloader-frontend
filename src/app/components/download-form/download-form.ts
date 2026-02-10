@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,11 +14,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 interface VideoFormat {
   id: string;
   quality: string;
-  format: string;  // This matches your data - it's "format" not "format"
+  format: string;  
   size: string;
   fps: number;
   codec: string | null;
@@ -40,6 +41,7 @@ interface VideoFormat {
     MatIcon,
     MatCardModule,
     MatProgressBarModule,
+    MatExpansionModule
   ],
   templateUrl: './download-form.html',
   styleUrl: './download-form.css',
@@ -51,6 +53,7 @@ export class DownloadForm {
   progress: number = 0;
   activeDownloads: Map<string, DownloadProgress> = new Map();
   formats: VideoFormat[] = [];
+  readonly panelOpenState = signal(false);
 
   constructor(
     private fb: FormBuilder,

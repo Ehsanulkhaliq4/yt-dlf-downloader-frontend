@@ -9,14 +9,9 @@
     <form [formGroup]="downloadForm" (ngSubmit)="onSubmit()" class="download-form">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>YouTube URL</mat-label>
-        <input 
-          matInput 
-          formControlName="url" 
-          placeholder="https://www.youtube.com/watch?v=..."
-          type="url"  
-        />
+        <input matInput formControlName="url" placeholder="https://www.youtube.com/watch?v=..." type="url" />
         <mat-icon matSuffix>link</mat-icon>
-        
+
         <mat-error *ngIf="url?.hasError('required')">
           YouTube URL is required
         </mat-error>
@@ -25,15 +20,20 @@
         </mat-error>
       </mat-form-field>
       <mat-card *ngIf="videoDetails" class="example-card" appearance="outlined">
-         <mat-card-header>
-           <mat-card-title>Title : {{ videoDetails.title }}</mat-card-title>
-           <mat-card-subtitle>Duration : {{ videoDetails.duration }}</mat-card-subtitle>
-         </mat-card-header>
+        <mat-card-header>
+          <mat-card-title>Title : {{ videoDetails.title }}</mat-card-title>
+          <mat-card-subtitle>Duration : {{ videoDetails.duration }}</mat-card-subtitle>
+        </mat-card-header>
         <img mat-card-image [src]="videoDetails.thumbnail" alt="Video thumbnail">
         <mat-card-content>
-          <p>
-            {{ videoDetails.description }}
-          </p>
+          <mat-accordion >
+            <mat-expansion-panel style="margin-top: 10px;" (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
+              <mat-expansion-panel-header>
+                <mat-panel-title> Description </mat-panel-title>
+              </mat-expansion-panel-header>
+              <p>{{ videoDetails.description }}</p>
+            </mat-expansion-panel>
+          </mat-accordion>
         </mat-card-content>
       </mat-card>
       <mat-form-field *ngIf="videoDetails?.formats" appearance="outline" class="full-width">
@@ -51,14 +51,8 @@
 
       <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
 
-      <button 
-        mat-raised-button 
-        color="primary" 
-        type="submit" 
-        class="submit-button"
-        [disabled]="!downloadForm.valid || isLoading || !videoDetails || !formats.length "
-        [class.loading]="isLoading"
-      >
+      <button mat-raised-button color="primary" type="submit" class="submit-button"
+        [disabled]="!downloadForm.valid || isLoading || !videoDetails || !formats.length " [class.loading]="isLoading">
         <span *ngIf="!isLoading">
           <mat-icon>download</mat-icon>
           Download Video
