@@ -37,6 +37,9 @@ body {
   margin-top: 1rem;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
 
 .material-toolbar-content {
   display: flex;
@@ -64,4 +67,12 @@ body {
   font-size: 20px;
   font-weight: 500;
   line-height: 24px;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.material-toolbar-icon {
+  vertical-align: middle;
 }

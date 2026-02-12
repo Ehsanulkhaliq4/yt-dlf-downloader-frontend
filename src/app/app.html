@@ -1,8 +1,12 @@
 <mat-toolbar color="primary" class="app-toolbar">
   <mat-toolbar-row>
-    <div class="material-toolbar-content">
+    <div class="material-toolbar-content" routerLink="/" class="cursor-pointer">
       <mat-icon class="material-toolbar-icon">download</mat-icon>
       <span class="material-toolbar-title">{{ title }}</span>
+    </div>
+     <span class="example-spacer"></span>
+      <div class="material-toolbar-content" [matTooltip]="'Downloads'" routerLink="/download" class="cursor-pointer">
+      <mat-icon class="material-toolbar-icon">downloading</mat-icon>
     </div>
   </mat-toolbar-row>
 </mat-toolbar>

@@ -8,6 +8,7 @@ import { Download, DownloadProgress } from '../../service/download';
 import { MatCardModule } from '@angular/material/card';
 import { catchError, interval, of, Subscription, switchMap, takeWhile } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DownloadProgressService } from '../../service/download-progress-service';
 
 @Component({
   selector: 'app-progress-dialog',
@@ -40,10 +41,16 @@ export class ProgressDialogComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<ProgressDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { downloadId: string },
-    private downloadService: Download
+    private downloadService: Download,
+    private downloadProgressService: DownloadProgressService
   ) {}
 
   ngOnInit(): void {
+    this.downloadProgressService.addDownloadTasks(
+      this.data.downloadId,
+      "",
+      ""
+    );
     this.startProgressPolling();
   }
 
@@ -65,15 +72,13 @@ export class ProgressDialogComponent implements OnInit, OnDestroy {
             })
           );
         }),
-        takeWhile((progress) => progress.percentage < 100, true) // Continue until 100%
+        takeWhile((progress) => progress.percentage < 100, true) 
       )
       .subscribe({
         next: (progress) => {
           this.isLoading = false;
           this.progress = progress;
-          // Update dialog title when completed
           if (progress.percentage >= 100) {
-            // Auto-close after 3 seconds when completed
             setTimeout(() => {
               this.dialogRef.close('completed');
             }, 3000);
@@ -115,6 +120,7 @@ export class ProgressDialogComponent implements OnInit, OnDestroy {
   }
 
   onClose(): void {
+    this.downloadProgressService.markDialogClosed(this.data.downloadId)
     this.dialogRef.close();
   }
 }
